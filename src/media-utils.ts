@@ -1,175 +1,219 @@
-import type { Storage } from "@gramio/storage";
-import type {
-	APIMethodParams,
-	APIMethods,
-	TelegramInputFile,
-} from "@gramio/types";
-
-type PreHandler<Method extends keyof APIMethods> = (
-	params: NonNullable<APIMethodParams<Method>>,
-	storage: Storage,
-) => unknown;
-
-type MethodsWithMediaUpload = {
-	[Method in keyof APIMethods]?: [PreHandler<Method>, PreHandler<Method>];
-};
-
-export function isFile(file?: TelegramInputFile | object | string) {
-	if (!file || typeof file !== "object") return false;
-
-	return file instanceof File || file instanceof Promise;
-}
+import {
+	IS_MEDIA_CACHED,
+	type MethodsWithMediaUpload,
+	getFileHash,
+	isFile,
+} from "utils";
 
 export const MEDIA_HELPERS = {
-	setWebhook: [
-		(params, storage) => {
-			if (isFile(params.certificate)) {
-				// todo
-			}
-		},
-		() => {},
-	],
 	sendPhoto: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.photo)) {
-				// todo
+				const file = await params.photo;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.photo = fileId;
+				}
 			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	sendAudio: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.audio)) {
-				// todo
+				const file = await params.audio;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.audio = fileId;
+				}
 			}
-			if (isFile(params.thumbnail)) {
-				// todo
-			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	sendDocument: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.document)) {
-				// todo
+				const file = await params.document;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.document = fileId;
+				}
 			}
-			if (isFile(params.thumbnail)) {
-				// todo
-			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	sendVideo: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.video)) {
-				// todo
+				const file = await params.video;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.video = fileId;
+				}
 			}
-			if (isFile(params.thumbnail)) {
-				// todo
-			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	sendAnimation: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.animation)) {
-				// todo
+				const file = await params.animation;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.animation = fileId;
+				}
 			}
-			if (isFile(params.thumbnail)) {
-				// todo
-			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	sendVoice: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.voice)) {
-				// todo
+				const file = await params.voice;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.voice = fileId;
+				}
 			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	sendVideoNote: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.video_note)) {
-				// todo
+				const file = await params.video_note;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.video_note = fileId;
+				}
 			}
-			if (isFile(params.thumbnail)) {
-				// todo
-			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	sendMediaGroup: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			// TODO: for cycle
-			// TODO: for cycle
+
+			return params;
 		},
-		() => {},
-	],
-	setChatPhoto: [
-		(params, storage) => {
-			if (isFile(params.photo)) {
-				// todo
-			}
-		},
-		() => {},
+		(response, storage) => {},
 	],
 	editMessageMedia: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if ("media" in params.media && isFile(params.media.media)) {
-				// todo
+				const file = await params.media.media;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.media.media = fileId;
+				}
 			}
-			if ("thumbnail" in params.media && isFile(params.media.thumbnail)) {
-				// todo
-			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	sendSticker: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.sticker)) {
-				// todo
+				const file = await params.sticker;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.sticker = fileId;
+				}
 			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
 	uploadStickerFile: [
-		(params, storage) => {
+		async (params, storage) => {
+			// @ts-expect-error
+			params[IS_MEDIA_CACHED] = true;
 			if (isFile(params.sticker)) {
-				// todo
+				const file = await params.sticker;
+				const hash = await getFileHash(file);
+				const fileId = await storage.get<string>(hash);
+				if (fileId) {
+					// TODO: need process
+
+					// @ts-expect-error
+					params.sticker = fileId;
+				}
 			}
+
+			return params;
 		},
-		() => {},
+		(response, storage) => {},
 	],
-	createNewStickerSet: [
-		(params, storage) => {
-			// TODO: for cycle
-		},
-		() => {},
-	],
-	addStickerToSet: [
-		(params, storage) => {
-			if (isFile(params.sticker.sticker)) {
-				// todo
-			}
-		},
-		() => {},
-	],
-	replaceStickerInSet: [
-		(params, storage) => {
-			if (isFile(params.sticker.sticker)) {
-				// todo
-			}
-		},
-		() => {},
-	],
-	setStickerSetThumbnail: [
-		(params, storage) => {
-			if (isFile(params.thumbnail)) {
-				// todo
-			}
-		},
-		() => {},
-	],
-} as const satisfies MethodsWithMediaUpload;
+} satisfies MethodsWithMediaUpload;

@@ -35,6 +35,13 @@ function findInputFileInArguments(
 
 	for (const argument of methodArguments) {
 		if (
+			argument.description?.includes(
+				"can't be reused and can be only uploaded as a new file",
+			)
+		)
+			continue;
+
+		if (
 			argument.reference === "InputFile" ||
 			(argument.type === "string" && argument.name === "media")
 		)
@@ -94,23 +101,6 @@ for (const method of schema.methods) {
 	}
 }
 
-function getPathToInputFile(
-	values: NonNullable<(typeof methods)["addStickerToSet"]>,
-) {
-	if (values.some((x) => x.type !== "array" && x.type !== "union"))
-		return "null";
-
-	return JSON.stringify(
-		values.map((value) => ({
-			name: value.name,
-			property: value.property,
-			type: value.type,
-		})),
-		null,
-		2,
-	);
-}
-
 fs.writeFile(
 	"./src/media-utils.ts",
 	// await prettier.format(
@@ -160,7 +150,7 @@ fs.writeFile(
 															.join("\n")}
                         
                                                     return params;
-                                                        }, () => {}]`;
+                                                        }, (response, storage) => {}]`;
 					})
 					.join(",\n")}
                 } satisfies MethodsWithMediaUpload;
