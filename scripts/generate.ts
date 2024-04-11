@@ -77,7 +77,11 @@ function findInputFileInArguments(
 }
 
 for (const method of schema.methods) {
-	if (method.multipart_only && method.arguments?.length) {
+	if (
+		method.multipart_only &&
+		method.arguments?.length &&
+		method.return_type.type !== "bool"
+	) {
 		// [INFO] Find only unique values (inspired by https://yagisanatode.com/get-a-unique-list-of-objects-in-an-array-of-object-in-javascript/)
 		methods[method.name] = [
 			...new Map(
@@ -111,24 +115,13 @@ fs.writeFile(
 	"./src/media-utils.ts",
 	// await prettier.format(
 	/* ts */ `
-        import type { APIMethods, APIMethodParams, TelegramInputFile } from "@gramio/types";
-        import type { Storage } from "@gramio/storage";
-
-        type PreHandler<Method extends keyof APIMethods>  = (params: (NonNullable<APIMethodParams<Method>>), storage: Storage) => unknown;
-
-        type MethodsWithMediaUpload = {
-            [Method in keyof APIMethods]?: [PreHandler<Method>, PreHandler<Method>];
-        };
-
-        export function isFile(file?: TelegramInputFile | object | string) {
-            if(!file || typeof file !== "object") return false;
-    
-            return file instanceof File || file instanceof Promise;
-        }
+        import { type MethodsWithMediaUpload, getFileHash, isFile, IS_MEDIA_CACHED } from "utils";
 
         export const MEDIA_HELPERS = {${Object.entries(methods)
 					.map(([method, value]) => {
-						return `${method}: [(params, storage) => {
+						return /* ts */ `${method}: [async (params, storage) => {
+                            // @ts-expect-error
+                            params[IS_MEDIA_CACHED] = true;
                             ${value
 															.map((x) => {
 																if (x.type === "array")
@@ -145,11 +138,29 @@ fs.writeFile(
 																		? `${x.property}.${x.name}`
 																		: `${x.name}`
 																})) {
-                                                                    // todo
+                                                                    const file = await params.${
+																																			x.property
+																																				? `${x.property}.${x.name}`
+																																				: `${x.name}`
+																																		}
+                                                                     const hash = await getFileHash(file);
+                                                                    const fileId = await storage.get<string>(hash);
+                                                                    if(fileId) {// TODO: need process
+
+                                                                    
+                                                                        // @ts-expect-error
+                                                                    params.${
+																																			x.property
+																																				? `${x.property}.${x.name}`
+																																				: `${x.name}`
+																																		} = fileId;
+                                                                                                                                    }
                                                                 }`;
 															})
 															.join("\n")}
-                        }, () => {}]`;
+                        
+                                                    return params;
+                                                        }, () => {}]`;
 					})
 					.join(",\n")}
                 } satisfies MethodsWithMediaUpload;
