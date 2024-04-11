@@ -11,7 +11,10 @@ const schema = JSON.parse(String(schemaFile)) as IBotApi.ISchema;
 const methods: Partial<
 	Record<
 		keyof APIMethods,
-		{ name: string; type?: "array" | "union"; property?: string }[]
+		[
+			IBotApi.IArgument,
+			{ name: string; type?: "array" | "union"; property?: string }[],
+		]
 	>
 > = {};
 
@@ -30,7 +33,7 @@ function findInputFileInArguments(
 	methodArguments: IBotApi.IArgument[],
 	argumentName?: string,
 ) {
-	const fileArguments: (typeof methods)["addStickerToSet"] = [];
+	const fileArguments: NonNullable<(typeof methods)["addStickerToSet"]>[1] = [];
 	if (!methodArguments?.length) return [];
 
 	for (const argument of methodArguments) {
@@ -91,12 +94,15 @@ for (const method of schema.methods) {
 	) {
 		// [INFO] Find only unique values (inspired by https://yagisanatode.com/get-a-unique-list-of-objects-in-an-array-of-object-in-javascript/)
 		methods[method.name] = [
-			...new Map(
-				findInputFileInArguments(method.arguments).map((item) => [
-					item.name,
-					item,
-				]),
-			).values(),
+			method.return_type,
+			[
+				...new Map(
+					findInputFileInArguments(method.arguments).map((item) => [
+						item.name,
+						item,
+					]),
+				).values(),
+			],
 		];
 	}
 }
@@ -108,7 +114,7 @@ fs.writeFile(
         import { type MethodsWithMediaUpload, getFileHash, isFile, MEDIA_CACHED } from "utils";
 
         export const MEDIA_HELPERS = {${Object.entries(methods)
-					.map(([method, value]) => {
+					.map(([method, [returnType, value]]) => {
 						return /* ts */ `${method}: [async (params, storage) => {
                             ${value
 															.map((x) => {
@@ -150,27 +156,52 @@ fs.writeFile(
                                                     return params;
                                                         }, async (response, params, storage) => {
 															if(typeof response !== "object") return;
-
-															${value.map((x) => {
-																if (x.type === "array")
-																	return "// TODO: for cycle";
-
-																return /* ts */ `if(response${
-																	method === "editMessageMedia"
-																		? "[params.media.type]"
-																		: x.property
-																			? `.${x.property}.${x.name}`
-																			: `.${x.name}`
-																}) {
+	
+															${
+																returnType.reference === "File"
+																	? /* ts */ `
 																	// @ts-expect-error
 																	const hash = await getFileHash(params[MEDIA_CACHED]);
-                                                                    await storage.set(hash, response.${
-																																			x.property
-																																				? `${x.property}.${x.name}`
-																																				: `${x.name}`
+																	await storage.set(hash, response.file_id)`
+																	: value.map((x) => {
+																			if (x.type === "array")
+																				return "// TODO: for cycle";
+
+																			if (method === "editMessageMedia")
+																				return /* ts */ `const fileKey = response[params.media.type];
+																			
+																			if(fileKey) {
+																			// @ts-expect-error
+																	const hash = await getFileHash(params.${
+																		x.property
+																			? `${x.property}.${x.name}`
+																			: `${x.name}`
+																	});
+                                                                    await storage.set(hash, Array.isArray(fileKey) ? fileKey.at(-1)?.file_id : fileKey?.file_id) 
+																	}`;
+
+																			return /* ts */ `if(response.${
+																				x.property
+																					? `${x.property}.${x.name}`
+																					: `${x.name}`
+																			}) {
+																	// @ts-expect-error
+																	const hash = await getFileHash(params.${
+																		x.property
+																			? `${x.property}.${x.name}`
+																			: `${x.name}`
+																	});
+                                                                    await storage.set(hash, response${
+																																			x.name ===
+																																			"photo"
+																																				? `.${x.name}.at(-1)!`
+																																				: x.property
+																																					? `.${x.property}.${x.name}`
+																																					: `.${x.name}`
 																																		}.file_id);
 																}`;
-															})}
+																		})
+															}
 														}]`;
 					})
 					.join(",\n")}

@@ -28,8 +28,8 @@ export const MEDIA_HELPERS = {
 
 			if (response.photo) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
-				await storage.set(hash, response.photo.file_id);
+				const hash = await getFileHash(params.photo);
+				await storage.set(hash, response.photo.at(-1)!.file_id);
 			}
 		},
 	],
@@ -55,7 +55,7 @@ export const MEDIA_HELPERS = {
 
 			if (response.audio) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
+				const hash = await getFileHash(params.audio);
 				await storage.set(hash, response.audio.file_id);
 			}
 		},
@@ -82,7 +82,7 @@ export const MEDIA_HELPERS = {
 
 			if (response.document) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
+				const hash = await getFileHash(params.document);
 				await storage.set(hash, response.document.file_id);
 			}
 		},
@@ -109,7 +109,7 @@ export const MEDIA_HELPERS = {
 
 			if (response.video) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
+				const hash = await getFileHash(params.video);
 				await storage.set(hash, response.video.file_id);
 			}
 		},
@@ -136,7 +136,7 @@ export const MEDIA_HELPERS = {
 
 			if (response.animation) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
+				const hash = await getFileHash(params.animation);
 				await storage.set(hash, response.animation.file_id);
 			}
 		},
@@ -163,7 +163,7 @@ export const MEDIA_HELPERS = {
 
 			if (response.voice) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
+				const hash = await getFileHash(params.voice);
 				await storage.set(hash, response.voice.file_id);
 			}
 		},
@@ -190,7 +190,7 @@ export const MEDIA_HELPERS = {
 
 			if (response.video_note) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
+				const hash = await getFileHash(params.video_note);
 				await storage.set(hash, response.video_note.file_id);
 			}
 		},
@@ -227,10 +227,15 @@ export const MEDIA_HELPERS = {
 		async (response, params, storage) => {
 			if (typeof response !== "object") return;
 
-			if (response[params.media.type]) {
+			const fileKey = response[params.media.type];
+
+			if (fileKey) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
-				await storage.set(hash, response.media.media.file_id);
+				const hash = await getFileHash(params.media.media);
+				await storage.set(
+					hash,
+					Array.isArray(fileKey) ? fileKey.at(-1)?.file_id : fileKey?.file_id,
+				);
 			}
 		},
 	],
@@ -256,7 +261,7 @@ export const MEDIA_HELPERS = {
 
 			if (response.sticker) {
 				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
+				const hash = await getFileHash(params.sticker);
 				await storage.set(hash, response.sticker.file_id);
 			}
 		},
@@ -281,11 +286,9 @@ export const MEDIA_HELPERS = {
 		async (response, params, storage) => {
 			if (typeof response !== "object") return;
 
-			if (response.sticker) {
-				// @ts-expect-error
-				const hash = await getFileHash(params[MEDIA_CACHED]);
-				await storage.set(hash, response.sticker.file_id);
-			}
+			// @ts-expect-error
+			const hash = await getFileHash(params[MEDIA_CACHED]);
+			await storage.set(hash, response.file_id);
 		},
 	],
 } satisfies MethodsWithMediaUpload;
