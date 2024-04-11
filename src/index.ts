@@ -18,17 +18,17 @@ export function mediaCacher(options: MediaCacherOptions = {}) {
 
 			// @ts-ignore
 			context.params = await preRequest(context.params, storage);
-			console.log("edited params", context.params);
+
 			return context;
 		})
 		.group((bot) =>
 			bot.onResponse(methods, async ({ method, params, response }) => {
 				// @ts-expect-error Symbol
-				if (params?.[IS_MEDIA_CACHED]) {
+				if (!params?.[MEDIA_CACHED]) {
 					const [_, onResponse] = MEDIA_HELPERS[method];
 
 					// @ts-ignore
-					onResponse(params, storage);
+					await onResponse(response, params, storage);
 				}
 			}),
 		);
