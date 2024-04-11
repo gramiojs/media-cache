@@ -44,6 +44,4 @@ jobs:
                   tag: v${{ steps.changelog.outputs.version }}
                   name: v${{ steps.changelog.outputs.version }}
                   body: ${{ steps.changelog.outputs.changelog }}
-                  draft: false
-                  prerelease: false
                   generateReleaseNotes: true
