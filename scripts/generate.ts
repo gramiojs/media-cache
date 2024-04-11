@@ -109,8 +109,8 @@ for (const method of schema.methods) {
 
 fs.writeFile(
 	"./src/media-utils.ts",
-	// await prettier.format(
-	/* ts */ `
+	await prettier.format(
+		/* ts */ `
         import { type MethodsWithMediaUpload, getFileHash, isFile, MEDIA_CACHED } from "utils";
 
         export const MEDIA_HELPERS = {${Object.entries(methods)
@@ -207,11 +207,11 @@ fs.writeFile(
 					.join(",\n")}
                 } satisfies MethodsWithMediaUpload;
         `,
-	// 	{
-	// 		tabWidth: 4,
-	// 		parser: "typescript",
-	// 		endOfLine: "auto",
-	// 		semi: false,
-	// 	},
-	// ),
+		{
+			tabWidth: 4,
+			parser: "typescript",
+			endOfLine: "auto",
+			semi: false,
+		},
+	),
 );

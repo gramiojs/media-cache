@@ -3,13 +3,13 @@ import { Plugin } from "gramio";
 import { MEDIA_HELPERS } from "./media-utils";
 import { MEDIA_CACHED } from "./utils";
 
-export interface MediaCacherOptions {
+export interface MediaCacheOptions {
 	storage?: Storage;
 }
 
 const methods = Object.keys(MEDIA_HELPERS) as (keyof typeof MEDIA_HELPERS)[];
 
-export function mediaCacher(options: MediaCacherOptions = {}) {
+export function mediaCache(options: MediaCacheOptions = {}) {
 	const storage = options.storage ?? inMemoryStorage();
 
 	return new Plugin("@gramio/media-cacher")

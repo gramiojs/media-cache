@@ -23,7 +23,8 @@ export type MethodsWithMediaUpload = {
 	[Method in keyof APIMethods]?: [PreHandler<Method>, onResponse<Method>];
 };
 
-export async function getFileHash(file: File) {
+export async function getFileHash(file: MaybePromise<File>) {
+	file = await file;
 	return createHash("md5")
 		.update(file.name + file.size + (await file.text()))
 		.digest("hex");
