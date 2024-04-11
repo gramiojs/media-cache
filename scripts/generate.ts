@@ -142,7 +142,7 @@ fs.writeFile(
                                                                     if(fileId) {// TODO: need process
 																	// @ts-expect-error
 																		params[MEDIA_CACHED] = file;
-                                                                        // @ts-expect-error
+                                                                        // @ts-ignore
                                                                     params.${
 																																			x.property
 																																				? `${x.property}.${x.name}`
