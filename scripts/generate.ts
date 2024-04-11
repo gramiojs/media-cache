@@ -105,13 +105,11 @@ fs.writeFile(
 	"./src/media-utils.ts",
 	// await prettier.format(
 	/* ts */ `
-        import { type MethodsWithMediaUpload, getFileHash, isFile, IS_MEDIA_CACHED } from "utils";
+        import { type MethodsWithMediaUpload, getFileHash, isFile, MEDIA_CACHED } from "utils";
 
         export const MEDIA_HELPERS = {${Object.entries(methods)
 					.map(([method, value]) => {
 						return /* ts */ `${method}: [async (params, storage) => {
-                            // @ts-expect-error
-                            params[IS_MEDIA_CACHED] = true;
                             ${value
 															.map((x) => {
 																if (x.type === "array")
@@ -136,8 +134,8 @@ fs.writeFile(
                                                                      const hash = await getFileHash(file);
                                                                     const fileId = await storage.get<string>(hash);
                                                                     if(fileId) {// TODO: need process
-
-                                                                    
+																	// @ts-expect-error
+																		params[MEDIA_CACHED] = file;
                                                                         // @ts-expect-error
                                                                     params.${
 																																			x.property
@@ -150,7 +148,30 @@ fs.writeFile(
 															.join("\n")}
                         
                                                     return params;
-                                                        }, (response, storage) => {}]`;
+                                                        }, async (response, params, storage) => {
+															if(typeof response !== "object") return;
+
+															${value.map((x) => {
+																if (x.type === "array")
+																	return "// TODO: for cycle";
+
+																return /* ts */ `if(response${
+																	method === "editMessageMedia"
+																		? "[params.media.type]"
+																		: x.property
+																			? `.${x.property}.${x.name}`
+																			: `.${x.name}`
+																}) {
+																	// @ts-expect-error
+																	const hash = await getFileHash(params[MEDIA_CACHED]);
+                                                                    await storage.set(hash, response.${
+																																			x.property
+																																				? `${x.property}.${x.name}`
+																																				: `${x.name}`
+																																		}.file_id);
+																}`;
+															})}
+														}]`;
 					})
 					.join(",\n")}
                 } satisfies MethodsWithMediaUpload;

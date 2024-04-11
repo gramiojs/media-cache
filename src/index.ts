@@ -1,15 +1,7 @@
-import { createHash } from "node:crypto";
 import { type Storage, inMemoryStorage } from "@gramio/storage";
 import { Plugin } from "gramio";
 import { MEDIA_HELPERS } from "./media-utils";
-
-export function getHashFromFile(file: File) {
-	return createHash("md5")
-		.update(file.name + file.size + file.type)
-		.digest("hex");
-}
-
-export const IS_MEDIA_CACHED = Symbol("IS_MEDIA_CACHED");
+import { MEDIA_CACHED } from "./utils";
 
 export interface MediaCacherOptions {
 	storage?: Storage;
@@ -25,8 +17,8 @@ export function mediaCacher(options: MediaCacherOptions = {}) {
 			const [preRequest] = MEDIA_HELPERS[context.method];
 
 			// @ts-ignore
-			preRequest(context.params, storage);
-
+			context.params = await preRequest(context.params, storage);
+			console.log("edited params", context.params);
 			return context;
 		})
 		.group((bot) =>

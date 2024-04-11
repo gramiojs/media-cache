@@ -14,7 +14,8 @@ type PreHandler<Method extends keyof APIMethods> = (
 ) => Promise<NonNullable<APIMethodParams<Method>>>;
 
 type onResponse<Method extends keyof APIMethods> = (
-	params: APIMethodReturn<Method>,
+	response: APIMethodReturn<Method>,
+	params: NonNullable<APIMethodParams<Method>>,
 	storage: Storage,
 ) => void;
 
@@ -23,7 +24,6 @@ export type MethodsWithMediaUpload = {
 };
 
 export async function getFileHash(file: File) {
-	console.log(file.name + file.size + (await file.text()));
 	return createHash("md5")
 		.update(file.name + file.size + (await file.text()))
 		.digest("hex");
@@ -37,4 +37,4 @@ export function isFile(
 	return file instanceof File || file instanceof Promise;
 }
 
-export const IS_MEDIA_CACHED = Symbol("IS_MEDIA_CACHED");
+export const MEDIA_CACHED = Symbol("MEDIA_CACHED");
