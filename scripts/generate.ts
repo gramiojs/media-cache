@@ -155,7 +155,8 @@ fs.writeFile(
                         
                                                     return params;
                                                         }, async (response, params, storage) => {
-															if(typeof response !== "object") return;
+															// @ts-expect-error
+															if(typeof response !== "object" || !params[MEDIA_CACHED]) return;
 	
 															${
 																returnType.reference === "File"
