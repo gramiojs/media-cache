@@ -4,9 +4,9 @@ import type {
 	APIMethodParams,
 	APIMethodReturn,
 	APIMethods,
+	MaybePromise,
 	TelegramInputFile,
-} from "@gramio/types";
-import type { MaybePromise } from "gramio";
+} from "gramio";
 
 type PreHandler<Method extends keyof APIMethods> = (
 	params: NonNullable<APIMethodParams<Method>>,

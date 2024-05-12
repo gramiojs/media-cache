@@ -113,6 +113,7 @@ fs.writeFile(
 		/* ts */ `
         import { type MethodsWithMediaUpload, getFileHash, isFile, MEDIA_CACHED } from "utils";
 
+		/** Map of Methods and cache utils for params */
         export const MEDIA_HELPERS = {${Object.entries(methods)
 					.map(([method, [returnType, value]]) => {
 						return /* ts */ `${method}: [async (params, storage) => {
