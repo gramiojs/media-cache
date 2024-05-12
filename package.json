@@ -8,7 +8,8 @@
     "readme": "https://gramio.netlify.app/plugins/official/media-cache.html",
     "scripts": {
         "prepublishOnly": "tsc && bunx tsc-alias",
-        "generate": "bun scripts/generate.ts"
+        "generate": "bun scripts/generate.ts",
+        "jsr": "bun scripts/release-jsr.ts"
     },
     "keywords": [
         "gramio",
