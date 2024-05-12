@@ -1,9 +1,14 @@
 {
     "name": "@gramio/media-cache",
-    "version": "0.0.9",
+    "version": "0.0.3",
     "exports": "./src/index.ts",
     "publish": {
-        "include": ["deno.json", "src", "README.md", "tsconfig.json"]
+        "include": [
+            "deno.json",
+            "src",
+            "README.md",
+            "tsconfig.json"
+        ]
     },
     "imports": {
         "@gramio/storage": "jsr:@gramio/storage@^0.0.3",
