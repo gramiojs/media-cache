@@ -1,6 +1,6 @@
 {
     "name": "@gramio/media-cache",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Media cache plugin for GramIO",
     "main": "dist/index.js",
     "type": "commonjs",
