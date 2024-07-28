@@ -3,7 +3,7 @@ import {
 	type MethodsWithMediaUpload,
 	getFileHash,
 	isFile,
-} from "./utils";
+} from "./utils.js";
 
 /** Map of Methods and cache utils for params */
 export const MEDIA_HELPERS = {

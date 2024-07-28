@@ -1,7 +1,7 @@
 import { type Storage, inMemoryStorage } from "@gramio/storage";
 import { Plugin } from "gramio";
-import { MEDIA_HELPERS } from "./media-utils";
-import { MEDIA_CACHED } from "./utils";
+import { MEDIA_HELPERS } from "./media-utils.js";
+import { MEDIA_CACHED } from "./utils.js";
 
 /** Options for {@link mediaCache} Plugin */
 export interface MediaCacheOptions {
