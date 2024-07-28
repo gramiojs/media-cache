@@ -17,6 +17,7 @@
 			}
 		}
 	},
+	"license": "MIT",
 	"type": "module",
 	"homepage": "https://github.com/gramiojs/media-cache",
 	"readme": "https://gramio.dev/plugins/official/media-cache.html",

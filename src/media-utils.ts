@@ -12,7 +12,7 @@ export const MEDIA_HELPERS = {
 			if (isFile(params.photo)) {
 				const file = await params.photo;
 				const hash = await getFileHash(file);
-				const fileId = await s torage.get<string>(hash);
+				const fileId = await storage.get<string>(hash);
 				if (fileId) {
 					// TODO: need process
 					// @ts-expect-error
