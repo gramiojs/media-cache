@@ -111,7 +111,7 @@ fs.writeFile(
 	"./src/media-utils.ts",
 	await prettier.format(
 		/* ts */ `
-        import { type MethodsWithMediaUpload, getFileHash, isFile, MEDIA_CACHED } from "utils";
+        import { type MethodsWithMediaUpload, getFileHash, isFile, MEDIA_CACHED } from "./utils.js";
 
 		/** Map of Methods and cache utils for params */
         export const MEDIA_HELPERS = {${Object.entries(methods)

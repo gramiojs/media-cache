@@ -12,7 +12,7 @@ export const MEDIA_HELPERS = {
 			if (isFile(params.photo)) {
 				const file = await params.photo;
 				const hash = await getFileHash(file);
-				const fileId = await storage.get<string>(hash);
+				const fileId = await s torage.get<string>(hash);
 				if (fileId) {
 					// TODO: need process
 					// @ts-expect-error
@@ -203,6 +203,19 @@ export const MEDIA_HELPERS = {
 			}
 		},
 	],
+	sendPaidMedia: [
+		async (params, storage) => {
+			// TODO: for cycle
+
+			return params;
+		},
+		async (response, params, storage) => {
+			// @ts-expect-error
+			if (typeof response !== "object" || !params[MEDIA_CACHED]) return;
+
+			// TODO: for cycle
+		},
+	],
 	sendMediaGroup: [
 		async (params, storage) => {
 			// TODO: for cycle
@@ -214,6 +227,15 @@ export const MEDIA_HELPERS = {
 			if (typeof response !== "object" || !params[MEDIA_CACHED]) return;
 
 			// TODO: for cycle
+		},
+	],
+	sendPoll: [
+		async (params, storage) => {
+			return params;
+		},
+		async (response, params, storage) => {
+			// @ts-expect-error
+			if (typeof response !== "object" || !params[MEDIA_CACHED]) return;
 		},
 	],
 	editMessageMedia: [
