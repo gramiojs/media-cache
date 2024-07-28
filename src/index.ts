@@ -8,7 +8,7 @@ export interface MediaCacheOptions {
 	/**
 	 * The {@link Storage} in which to store the cached `file_id`
 	 *
-	 * [Documentation](https://gramio.netlify.app/storages/)
+	 * [Documentation](https://gramio.dev/storages/)
 	 */
 	storage?: Storage;
 }
@@ -16,7 +16,7 @@ export interface MediaCacheOptions {
 const methods = Object.keys(MEDIA_HELPERS) as (keyof typeof MEDIA_HELPERS)[];
 
 /**
- * `Media cache` plugin for [GramIO](https://gramio.netlify.app/).
+ * `Media cache` plugin for [GramIO](https://gramio.dev/).
  *
  * This plugin caches the sent `file_id`'s and prevents files from being uploaded again.
  *
